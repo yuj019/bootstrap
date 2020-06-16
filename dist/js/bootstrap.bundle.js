@@ -834,90 +834,6 @@
   }
 
   /**
-   * --------------------------------------------------------------------------
-   * Bootstrap (v5.0.0-alpha1): dom/selector-engine.js
-   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-   * --------------------------------------------------------------------------
-   */
-  /**
-   * ------------------------------------------------------------------------
-   * Constants
-   * ------------------------------------------------------------------------
-   */
-
-  var NODE_TEXT = 3;
-  var SelectorEngine = {
-    matches: function matches(element, selector) {
-      return element.matches(selector);
-    },
-    find: function find$1(selector, element) {
-      var _ref;
-
-      if (element === void 0) {
-        element = document.documentElement;
-      }
-
-      return (_ref = []).concat.apply(_ref, find.call(element, selector));
-    },
-    findOne: function findOne$1(selector, element) {
-      if (element === void 0) {
-        element = document.documentElement;
-      }
-
-      return findOne.call(element, selector);
-    },
-    children: function children(element, selector) {
-      var _ref2;
-
-      var children = (_ref2 = []).concat.apply(_ref2, element.children);
-
-      return children.filter(function (child) {
-        return child.matches(selector);
-      });
-    },
-    parents: function parents(element, selector) {
-      var parents = [];
-      var ancestor = element.parentNode;
-
-      while (ancestor && ancestor.nodeType === Node.ELEMENT_NODE && ancestor.nodeType !== NODE_TEXT) {
-        if (this.matches(ancestor, selector)) {
-          parents.push(ancestor);
-        }
-
-        ancestor = ancestor.parentNode;
-      }
-
-      return parents;
-    },
-    prev: function prev(element, selector) {
-      var previous = element.previousElementSibling;
-
-      while (previous) {
-        if (previous.matches(selector)) {
-          return [previous];
-        }
-
-        previous = previous.previousElementSibling;
-      }
-
-      return [];
-    },
-    next: function next(element, selector) {
-      var next = element.nextElementSibling;
-
-      while (next) {
-        if (this.matches(next, selector)) {
-          return [next];
-        }
-
-        next = next.nextElementSibling;
-      }
-
-      return [];
-    }
-  };
-
-  /**
    * ------------------------------------------------------------------------
    * Constants
    * ------------------------------------------------------------------------
@@ -929,16 +845,8 @@
   var EVENT_KEY$1 = "." + DATA_KEY$1;
   var DATA_API_KEY$1 = '.data-api';
   var CLASS_NAME_ACTIVE = 'active';
-  var CLASS_NAME_DISABLED = 'disabled';
-  var CLASS_NAME_FOCUS = 'focus';
-  var SELECTOR_DATA_TOGGLE_CARROT = '[data-toggle^="button"]';
-  var SELECTOR_DATA_TOGGLE = '[data-toggle="buttons"]';
-  var SELECTOR_INPUT = 'input:not([type="hidden"])';
-  var SELECTOR_ACTIVE = '.active';
-  var SELECTOR_BUTTON = '.btn';
+  var SELECTOR_DATA_TOGGLE = '[data-toggle="button"]';
   var EVENT_CLICK_DATA_API$1 = "click" + EVENT_KEY$1 + DATA_API_KEY$1;
-  var EVENT_FOCUS_DATA_API = "focus" + EVENT_KEY$1 + DATA_API_KEY$1;
-  var EVENT_BLUR_DATA_API = "blur" + EVENT_KEY$1 + DATA_API_KEY$1;
   /**
    * ------------------------------------------------------------------------
    * Class Definition
@@ -956,46 +864,8 @@
 
     // Public
     _proto.toggle = function toggle() {
-      var triggerChangeEvent = true;
-      var addAriaPressed = true;
-
-      var rootElement = this._element.closest(SELECTOR_DATA_TOGGLE);
-
-      if (rootElement) {
-        var input = SelectorEngine.findOne(SELECTOR_INPUT, this._element);
-
-        if (input && input.type === 'radio') {
-          if (input.checked && this._element.classList.contains(CLASS_NAME_ACTIVE)) {
-            triggerChangeEvent = false;
-          } else {
-            var activeElement = SelectorEngine.findOne(SELECTOR_ACTIVE, rootElement);
-
-            if (activeElement) {
-              activeElement.classList.remove(CLASS_NAME_ACTIVE);
-            }
-          }
-
-          if (triggerChangeEvent) {
-            if (input.hasAttribute('disabled') || rootElement.hasAttribute('disabled') || input.classList.contains(CLASS_NAME_DISABLED) || rootElement.classList.contains(CLASS_NAME_DISABLED)) {
-              return;
-            }
-
-            input.checked = !this._element.classList.contains(CLASS_NAME_ACTIVE);
-            EventHandler.trigger(input, 'change');
-          }
-
-          input.focus();
-          addAriaPressed = false;
-        }
-      }
-
-      if (addAriaPressed) {
-        this._element.setAttribute('aria-pressed', !this._element.classList.contains(CLASS_NAME_ACTIVE));
-      }
-
-      if (triggerChangeEvent) {
-        this._element.classList.toggle(CLASS_NAME_ACTIVE);
-      }
+      // Toggle class and sync the `aria-pressed` attribute with the return value of the `.toggle()` method
+      this._element.setAttribute('aria-pressed', this._element.classList.toggle(CLASS_NAME_ACTIVE));
     };
 
     _proto.dispose = function dispose() {
@@ -1038,9 +908,9 @@
    */
 
 
-  EventHandler.on(document, EVENT_CLICK_DATA_API$1, SELECTOR_DATA_TOGGLE_CARROT, function (event) {
+  EventHandler.on(document, EVENT_CLICK_DATA_API$1, SELECTOR_DATA_TOGGLE, function (event) {
     event.preventDefault();
-    var button = event.target.closest(SELECTOR_BUTTON);
+    var button = event.target.closest(SELECTOR_DATA_TOGGLE);
     var data = Data.getData(button, DATA_KEY$1);
 
     if (!data) {
@@ -1048,20 +918,6 @@
     }
 
     data.toggle();
-  });
-  EventHandler.on(document, EVENT_FOCUS_DATA_API, SELECTOR_DATA_TOGGLE_CARROT, function (event) {
-    var button = event.target.closest(SELECTOR_BUTTON);
-
-    if (button) {
-      button.classList.add(CLASS_NAME_FOCUS);
-    }
-  });
-  EventHandler.on(document, EVENT_BLUR_DATA_API, SELECTOR_DATA_TOGGLE_CARROT, function (event) {
-    var button = event.target.closest(SELECTOR_BUTTON);
-
-    if (button) {
-      button.classList.remove(CLASS_NAME_FOCUS);
-    }
   });
   var $$2 = getjQuery();
   /**
@@ -1165,6 +1021,90 @@
   };
 
   /**
+   * --------------------------------------------------------------------------
+   * Bootstrap (v5.0.0-alpha1): dom/selector-engine.js
+   * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
+   * --------------------------------------------------------------------------
+   */
+  /**
+   * ------------------------------------------------------------------------
+   * Constants
+   * ------------------------------------------------------------------------
+   */
+
+  var NODE_TEXT = 3;
+  var SelectorEngine = {
+    matches: function matches(element, selector) {
+      return element.matches(selector);
+    },
+    find: function find$1(selector, element) {
+      var _ref;
+
+      if (element === void 0) {
+        element = document.documentElement;
+      }
+
+      return (_ref = []).concat.apply(_ref, find.call(element, selector));
+    },
+    findOne: function findOne$1(selector, element) {
+      if (element === void 0) {
+        element = document.documentElement;
+      }
+
+      return findOne.call(element, selector);
+    },
+    children: function children(element, selector) {
+      var _ref2;
+
+      var children = (_ref2 = []).concat.apply(_ref2, element.children);
+
+      return children.filter(function (child) {
+        return child.matches(selector);
+      });
+    },
+    parents: function parents(element, selector) {
+      var parents = [];
+      var ancestor = element.parentNode;
+
+      while (ancestor && ancestor.nodeType === Node.ELEMENT_NODE && ancestor.nodeType !== NODE_TEXT) {
+        if (this.matches(ancestor, selector)) {
+          parents.push(ancestor);
+        }
+
+        ancestor = ancestor.parentNode;
+      }
+
+      return parents;
+    },
+    prev: function prev(element, selector) {
+      var previous = element.previousElementSibling;
+
+      while (previous) {
+        if (previous.matches(selector)) {
+          return [previous];
+        }
+
+        previous = previous.previousElementSibling;
+      }
+
+      return [];
+    },
+    next: function next(element, selector) {
+      var next = element.nextElementSibling;
+
+      while (next) {
+        if (this.matches(next, selector)) {
+          return [next];
+        }
+
+        next = next.nextElementSibling;
+      }
+
+      return [];
+    }
+  };
+
+  /**
    * ------------------------------------------------------------------------
    * Constants
    * ------------------------------------------------------------------------
@@ -1221,7 +1161,7 @@
   var CLASS_NAME_NEXT = 'carousel-item-next';
   var CLASS_NAME_PREV = 'carousel-item-prev';
   var CLASS_NAME_POINTER_EVENT = 'pointer-event';
-  var SELECTOR_ACTIVE$1 = '.active';
+  var SELECTOR_ACTIVE = '.active';
   var SELECTOR_ACTIVE_ITEM = '.active.carousel-item';
   var SELECTOR_ITEM = '.carousel-item';
   var SELECTOR_ITEM_IMG = '.carousel-item img';
@@ -1536,7 +1476,7 @@
 
     _proto._setActiveIndicatorElement = function _setActiveIndicatorElement(element) {
       if (this._indicatorsElement) {
-        var indicators = SelectorEngine.find(SELECTOR_ACTIVE$1, this._indicatorsElement);
+        var indicators = SelectorEngine.find(SELECTOR_ACTIVE, this._indicatorsElement);
 
         for (var i = 0; i < indicators.length; i++) {
           indicators[i].classList.remove(CLASS_NAME_ACTIVE$1);
@@ -4805,7 +4745,7 @@
   var EVENT_CLICK_DATA_API$4 = "click" + EVENT_KEY$4 + DATA_API_KEY$4;
   var EVENT_KEYDOWN_DATA_API = "keydown" + EVENT_KEY$4 + DATA_API_KEY$4;
   var EVENT_KEYUP_DATA_API = "keyup" + EVENT_KEY$4 + DATA_API_KEY$4;
-  var CLASS_NAME_DISABLED$1 = 'disabled';
+  var CLASS_NAME_DISABLED = 'disabled';
   var CLASS_NAME_SHOW$1 = 'show';
   var CLASS_NAME_DROPUP = 'dropup';
   var CLASS_NAME_DROPRIGHT = 'dropright';
@@ -4864,7 +4804,7 @@
 
     // Public
     _proto.toggle = function toggle() {
-      if (this._element.disabled || this._element.classList.contains(CLASS_NAME_DISABLED$1)) {
+      if (this._element.disabled || this._element.classList.contains(CLASS_NAME_DISABLED)) {
         return;
       }
 
@@ -4880,7 +4820,7 @@
     };
 
     _proto.show = function show() {
-      if (this._element.disabled || this._element.classList.contains(CLASS_NAME_DISABLED$1) || this._menu.classList.contains(CLASS_NAME_SHOW$1)) {
+      if (this._element.disabled || this._element.classList.contains(CLASS_NAME_DISABLED) || this._menu.classList.contains(CLASS_NAME_SHOW$1)) {
         return;
       }
 
@@ -4944,7 +4884,7 @@
     };
 
     _proto.hide = function hide() {
-      if (this._element.disabled || this._element.classList.contains(CLASS_NAME_DISABLED$1) || !this._menu.classList.contains(CLASS_NAME_SHOW$1)) {
+      if (this._element.disabled || this._element.classList.contains(CLASS_NAME_DISABLED) || !this._menu.classList.contains(CLASS_NAME_SHOW$1)) {
         return;
       }
 
@@ -5179,7 +5119,7 @@
       event.preventDefault();
       event.stopPropagation();
 
-      if (this.disabled || this.classList.contains(CLASS_NAME_DISABLED$1)) {
+      if (this.disabled || this.classList.contains(CLASS_NAME_DISABLED)) {
         return;
       }
 
@@ -7285,12 +7225,12 @@
   var EVENT_CLICK_DATA_API$6 = "click" + EVENT_KEY$9 + DATA_API_KEY$7;
   var CLASS_NAME_DROPDOWN_MENU = 'dropdown-menu';
   var CLASS_NAME_ACTIVE$3 = 'active';
-  var CLASS_NAME_DISABLED$2 = 'disabled';
+  var CLASS_NAME_DISABLED$1 = 'disabled';
   var CLASS_NAME_FADE$3 = 'fade';
   var CLASS_NAME_SHOW$5 = 'show';
   var SELECTOR_DROPDOWN$1 = '.dropdown';
   var SELECTOR_NAV_LIST_GROUP$1 = '.nav, .list-group';
-  var SELECTOR_ACTIVE$2 = '.active';
+  var SELECTOR_ACTIVE$1 = '.active';
   var SELECTOR_ACTIVE_UL = ':scope > li > .active';
   var SELECTOR_DATA_TOGGLE$4 = '[data-toggle="tab"], [data-toggle="pill"], [data-toggle="list"]';
   var SELECTOR_DROPDOWN_TOGGLE$1 = '.dropdown-toggle';
@@ -7314,7 +7254,7 @@
     _proto.show = function show() {
       var _this = this;
 
-      if (this._element.parentNode && this._element.parentNode.nodeType === Node.ELEMENT_NODE && this._element.classList.contains(CLASS_NAME_ACTIVE$3) || this._element.classList.contains(CLASS_NAME_DISABLED$2)) {
+      if (this._element.parentNode && this._element.parentNode.nodeType === Node.ELEMENT_NODE && this._element.classList.contains(CLASS_NAME_ACTIVE$3) || this._element.classList.contains(CLASS_NAME_DISABLED$1)) {
         return;
       }
 
@@ -7324,7 +7264,7 @@
       var listElement = this._element.closest(SELECTOR_NAV_LIST_GROUP$1);
 
       if (listElement) {
-        var itemSelector = listElement.nodeName === 'UL' || listElement.nodeName === 'OL' ? SELECTOR_ACTIVE_UL : SELECTOR_ACTIVE$2;
+        var itemSelector = listElement.nodeName === 'UL' || listElement.nodeName === 'OL' ? SELECTOR_ACTIVE_UL : SELECTOR_ACTIVE$1;
         previous = SelectorEngine.find(itemSelector, listElement);
         previous = previous[previous.length - 1];
       }
@@ -7372,7 +7312,7 @@
     _proto._activate = function _activate(element, container, callback) {
       var _this2 = this;
 
-      var activeElements = container && (container.nodeName === 'UL' || container.nodeName === 'OL') ? SelectorEngine.find(SELECTOR_ACTIVE_UL, container) : SelectorEngine.children(container, SELECTOR_ACTIVE$2);
+      var activeElements = container && (container.nodeName === 'UL' || container.nodeName === 'OL') ? SelectorEngine.find(SELECTOR_ACTIVE_UL, container) : SelectorEngine.children(container, SELECTOR_ACTIVE$1);
       var active = activeElements[0];
       var isTransitioning = callback && active && active.classList.contains(CLASS_NAME_FADE$3);
 
